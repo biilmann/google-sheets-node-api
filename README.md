@@ -1,6 +1,6 @@
 # Simple Google Spreadsheet Access (node.js)
 
-[![NPM version](https://badge.fury.io/js/google-spreadsheet.png)](http://badge.fury.io/js/google-spreadsheet)
+[![NPM version](https://badge.fury.io/js/google-sheets-node-api.png)](http://badge.fury.io/js/google-sheets-node-api)
 
 A simple Node.js library to read and manipulate data in Google Spreadsheets.
 
@@ -9,58 +9,35 @@ Supports both list-based and cell-based feeds.
 
 ## Installation
 
-[![NPM Info](https://nodei.co/npm/google-spreadsheet.png?downloads=true&downloadRank=true&stars=true)](https://www.npmjs.org/package/google-spreadsheet)
-
 ## Basic Usage
 
 ``` javascript
-var GoogleSpreadsheet = require("google-spreadsheet");
+var creds = require('<client key JSON file>');
 
-// spreadsheet key is the long id in the sheets URL
-var my_sheet = new GoogleSpreadsheet('<spreadsheet key>');
+var GoogleSpreadsheet = require("google-sheets-node-api");
 
-// Without auth -- read only
-// IMPORTANT: See note below on how to make a sheet public-readable!
-// # is worksheet id - IDs start at 1
-my_sheet.getRows( 1, function(err, row_data){
-	console.log( 'pulled in '+row_data.length + ' rows');
+var mySheet = new GoogleSpreadsheet('<spreadsheet ID>');
+
+mySheet.useServiceAccountAuth(creds).then(mySheet.getInfo.bind(mySheet)).then(function(sheet_info ) {
+    console.log( sheet_info.title + ' is loaded' );
+
+    var sheet1 = sheet_info.worksheets[0];
+
+    sheet1.addRow({'Col1': 'Val1', Col2: 'Val2', Col3:'Val3', Col4: 'Val4', Col5: 'Val5', Col6: 'Val6', Col7: 'Val7'})
+        .then(sheet1.getRows.bind(sheet1, null))
+        .then(function(rows) {
+            return [rows, rows[0].del()];
+        })
+        .spread(function(rows) {
+            console.log('Done deleteing');
+            rows[1].Col7 = 'new val2';
+            return rows[1].save();
+        })
+        .then(console.log.bind(console, 'Done saving'))
+        .catch(function(e) {
+            console.error(e);
+        });
 });
-
-// With auth -- read + write
-// see below for authentication instructions
-var creds = require('./google-generated-creds.json');
-// OR, if you cannot save the file locally (like on heroku)
-var creds = {
-  client_email: 'yourserviceaccountemailhere@google.com',
-  private_key: 'your long private key stuff here'
-}
-
-my_sheet.useServiceAccountAuth(creds, function(err){
-	// getInfo returns info about the sheet and an array or "worksheet" objects
-	my_sheet.getInfo( function( err, sheet_info ){
-		console.log( sheet_info.title + ' is loaded' );
-		// use worksheet object if you want to stop using the # in your calls
-
-		var sheet1 = sheet_info.worksheets[0];
-		sheet1.getRows( function( err, rows ){
-			rows[0].colname = 'new val';
-			rows[0].save();	//async and takes a callback
-			rows[0].del();  //async and takes a callback
-		});
-	});
-
-	// column names are set by google and are based
-  // on the header row (first row) of your sheet
-	my_sheet.addRow( 2, { colname: 'col value'} );
-
-	my_sheet.getRows( 2, {
-		start: 100,			 // start index
-		num: 100,			   // number of rows to pull
-		orderby: 'name'  // column to order results by
-	}, function(err, row_data){
-		// do something...
-	});
-})
 ```
 
 ## Authentication
@@ -264,9 +241,9 @@ Clear the cell -- internally just calls `.setValue('', callback)`
 
 
 ## Thanks
-This is a fairly major rewrite of code by [samcday](https://github.com/samcday). original version [here](https://github.com/samcday/node-google-spreadsheets)
+This is a fairly major rewrite of [node-google-spreadsheet](https://github.com/theoephraim/node-google-spreadsheet).
 Also big thanks fo GoogleClientLogin for dealing with authentication.
 
 
 ## License
-node-google-spreadsheets is free and unencumbered public domain software. For more information, see the accompanying UNLICENSE file.
+google-sheets-node-api is free and unencumbered public domain software. For more information, see the accompanying UNLICENSE file.
