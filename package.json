@@ -1,8 +1,8 @@
 {
-  "author": "Theo Ephraim <theozero@gmail.com> (http://theoephraim.com); Harish krishnaswamy <harishkswamy@gmail.com>",
+  "author": "Theo Ephraim <theozero@gmail.com> (http://theoephraim.com)",
   "name": "google-sheets",
-  "description": "Promise (Q) based Google Spreadsheet Data API -- simple interface to read/write rows + cells",
-  "version": "1.0.2",
+  "description": "Promise (Q) based Google Spreadsheet Data API for Nodejs -- simple interface to read/write rows + cells",
+  "version": "0.1.0",
   "keywords": [
     "google",
     "spreadsheet",
@@ -10,10 +10,10 @@
     "gdata",
     "api"
   ],
-  "homepage": "https://github.com/harishkswamy/google-sheets",
+  "homepage": "https://github.com/harishkswamy/google-sheets-node-api",
   "repository": {
     "type": "git",
-    "url": "git://github.com/harishkswamy/google-sheets.git"
+    "url": "git://github.com/harishkswamy/google-sheets-node-api.git"
   },
   "main": "index.js",
   "engines": {
@@ -32,6 +32,12 @@
     "async": "~0.2.9"
   },
   "scripts": {
-    "test": "node_modules/.bin/nodeunit test/spreadsheet_test.js"
+    "test": "nodeunit test/spreadsheet_test.js"
+  },
+  "bugs": {
+    "url": "https://github.com/harishkswamy/google-sheets-node-api/issues"
+  },
+  "directories": {
+    "test": "test"
   }
 }
