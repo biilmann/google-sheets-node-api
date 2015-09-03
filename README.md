@@ -241,7 +241,7 @@ Clear the cell -- internally just calls `.setValue('', callback)`
 
 
 ## Thanks
-This is a fairly major rewrite of [node-google-spreadsheet](https://github.com/theoephraim/node-google-spreadsheet).
+This is a rewrite of [node-google-spreadsheet](https://github.com/theoephraim/node-google-spreadsheet), so thanks to [Theo Ephraim](https://github.com/theoephraim)
 Also big thanks fo GoogleClientLogin for dealing with authentication.
 
 
