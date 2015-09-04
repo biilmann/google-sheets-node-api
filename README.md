@@ -1,4 +1,4 @@
-# Simple Google Spreadsheet Access (node.js)
+# Simple promise-based Google Sheets Access from Nodejs
 
 [![NPM version](https://badge.fury.io/js/google-sheets-node-api.png)](http://badge.fury.io/js/google-sheets-node-api)
 
@@ -8,6 +8,10 @@ Works without authentication for read-only sheets or with auth for adding/editin
 Supports both list-based and cell-based feeds.
 
 ## Installation
+
+`npm install google-sheets-node-api`
+
+
 
 ## Basic Usage
 
@@ -108,7 +112,7 @@ Create a new google spreadsheet object.
 
 
 
-#### `GoogleSpreadsheet.useServiceAccountAuth(account_info, callback)`
+#### `GoogleSpreadsheet.useServiceAccountAuth(account_info)`
 
 Uses a service account email and public/private key to create a token to use to authenticated requests.
 Normally you would just pass in the require of the json file that google generates for you when you create a service account.
@@ -122,15 +126,16 @@ If you are using heroku or another environment where you cannot save a local fil
 Internally, this uses a JWT client to generate a new auth token for your service account that is valid for 1 hour. The token will be automatically regenerated when it expires.
 
 
+
 #### `GoogleSpreadsheet.setAuthToken(id)`
 
-Use an already created auth token for all future requets.
+Use an already created auth token for all future requests.
 
 
 
-#### `GoogleSpreadsheet.getInfo(callback)`
+#### `GoogleSpreadsheet.getInfo()`
 
-Get information about the spreadsheet. Calls callback passing an object that contains:
+Get information about the spreadsheet. Returns a promise which inturn will return the following object when fulfilled.
 
 - `title` - the title of the document
 - `updated` - last updated timestamp
@@ -141,9 +146,9 @@ Get information about the spreadsheet. Calls callback passing an object that con
 
 
 
-#### `GoogleSpreadsheet.getRows(worksheet_id, options, callback)`
+#### `GoogleSpreadsheet.getRows(worksheet_id, options)`
 
-Get an array of row objects from the sheet.
+Returns an array of row objects from the sheet when the promise is fulfilled.
 
 - `worksheet_id` - the index of the sheet to read from (index starts at 1)
 - `options` (optional)
@@ -152,23 +157,22 @@ Get an array of row objects from the sheet.
   - `orderby` - column key to order by
   - `reverse` - reverse results
   - `query` - send a structured query for rows ([more info](https://developers.google.com/google-apps/spreadsheets/#sending_a_structured_query_for_rows))
-- `callback(err, rows)` - will be called with an array of row objects (see below)
 
 
 
-#### `GoogleSpreadsheet.addRow(worksheet_id, new_row, callback)`
+#### `GoogleSpreadsheet.addRow(worksheet_id, new_row)`
 
-Add a single row to the sheet.
+Adds the new row to the sheet when the promise is fulfilled.
 
 - `worksheet_id` - the index of the sheet to add to (index starts at 1)
 - `new_row` - key-value object to add - keys must match the header row on your sheet
-- `callback(err)` - callback called after row is added
 
 
 
-#### `GoogleSpreadsheet.getCells(worksheet_id, options, callback)`
+#### `GoogleSpreadsheet.getCells(worksheet_id, options)`
 
-Get an array of cell objects.
+Returns an array of cell objects when the promise is fulfilled.
+
 - `worksheet_id` - the index of the sheet to add to (index starts at 1)
 - `options` (optional)
   - `min-row` - row range min (uses #s visible on the left)
@@ -192,13 +196,13 @@ __Properties:__
 - `rowCount` - number of rows
 - `colCount` - number of columns
 
-### `SpreadsheetWorksheet.getRows(options, callback)`
+### `SpreadsheetWorksheet.getRows(options)`
 See above.
 
-### `SpreadsheetWorksheet.getCells(options, callback)`
+### `SpreadsheetWorksheet.getCells(options)`
 See above.
 
-### `SpreadsheetWorksheet.addRow(new_row, callback)`
+### `SpreadsheetWorksheet.addRow(new_row)`
 See above.
 
 ----------------------------------
@@ -208,10 +212,10 @@ Represents a single row from a sheet.
 
 You can treat the row as a normal javascript object. Object keys will be from the header row of your sheet, however the google API mangles the names a bit to make them simpler. It's easiest if you just use all lowercase keys to begin with.
 
-#### `SpreadsheetRow.save( callback )`
+#### `SpreadsheetRow.save()`
 Saves any changes made to the row's values.
 
-#### `SpreadsheetRow.del( callback )`
+#### `SpreadsheetRow.del()`
 Deletes the row from the sheet.
 
 ----------------------------------
@@ -219,11 +223,11 @@ Deletes the row from the sheet.
 ### `SpreadsheetCell`
 Represents a single cell from the sheet.
 
-#### `SpreadsheetCell.setValue(val, callback)`
+#### `SpreadsheetCell.setValue(val)`
 Set the value of the cell and save it.
 
-#### `SpreadsheetCell.del(callback)`
-Clear the cell -- internally just calls `.setValue('', callback)`
+#### `SpreadsheetCell.del()`
+Clear the cell -- internally just calls `.setValue('')`
 
 
 ----------------------------------
