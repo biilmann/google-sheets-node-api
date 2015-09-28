@@ -119,15 +119,16 @@ var GooogleSpreadsheet = function (ss_key, auth_id, options) {
             });
 
         }).then(function (res) {
+            return [res, res.body.read()];
+        }).spread(function (res, body) {
             if (res.status === 401) {
-                throw new Error("Invalid authorization key.");
+                throw new Error("Invalid authorization key. " + body);
             } else if (res.status >= 400) {
-                throw new Error("HTTP error " + res.statusCode + ": " + http.STATUS_CODES[res.statusCode]);
+                throw new Error("HTTP error " + res.status + ": " + http.STATUS_CODES[res.status] + '. ' + body);
             } else if (res.status === 200 && res.headers['content-type'].indexOf('text/html') >= 0) {
-                throw new Error("Sheet is private. Use authentication or make public. (see https://github.com/theoephraim/node-google-spreadsheet#a-note-on-authentication for details)");
+                throw new Error("Sheet is private. Use authentication or make public. (see https://github.com/theoephraim/node-google-spreadsheet#a-note-on-authentication for details)\n" + body);
             }
-            return res.body.read();
-
+            return body;
         }).then(function (xml) {
             return xml ? [Q.ninvoke(xml_parser, 'parseString', xml), xml] : [null, null];
         }).spread(function (json, xml) {
