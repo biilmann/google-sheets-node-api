@@ -2,7 +2,7 @@
   "author": "Theo Ephraim <theozero@gmail.com> (http://theoephraim.com), Harish Krishnaswamy",
   "name": "google-sheets-node-api",
   "description": "Promise (Q) based Google Spreadsheet Data API for Nodejs -- simple interface to read/write rows + cells",
-  "version": "0.1.4",
+  "version": "0.2.0",
   "keywords": [
     "google",
     "spreadsheet",
