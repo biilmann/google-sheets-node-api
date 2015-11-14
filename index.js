@@ -153,6 +153,10 @@ module.exports = function(ss_key, auth_id, options) {
     this.addWorksheet = function(xml) {
         return self.makeFeedRequest(['worksheets', ss_key], null, 'POST', xml);
     };
+    
+    this.updateWorksheetMetadata = function(worksheetUrl, xml) {
+        return self.makeFeedRequest(worksheetUrl, null, 'PUT', xml);
+    };
 
     this.deleteWorksheet = function(worksheetUrl) {
         return self.makeFeedRequest(worksheetUrl, null, 'DELETE');
@@ -224,8 +228,8 @@ var Spreadsheet = function(gsheet, data) {
 var Worksheet = function(gsheet, spreadsheet, data) {
     var self = this;
 
-    self.id = data.id.substring(data.id.lastIndexOf("/") + 1);
-    self.title = data.title["_"];
+    self.id = data.id.substring(data.id.lastIndexOf('/') + 1);
+    self.title = data.title['_'];
     self.rowCount = data['gs:rowCount'];
     self.colCount = data['gs:colCount'];
     self.cells = [];
@@ -234,6 +238,21 @@ var Worksheet = function(gsheet, spreadsheet, data) {
         links[l.rel.substring(l.rel.lastIndexOf('#') + 1)] = l;
         return links;
     }, {});
+    
+    this.updateMetadata = function(title, rows, cols) {
+        var xml = '<entry xmlns="http://www.w3.org/2005/Atom" xmlns:gs="http://schemas.google.com/spreadsheets/2006">';
+        xml += '<title>' + title + '</title>';
+        xml += '<gs:rowCount>' + rows + '</gs:rowCount>';
+        xml += '<gs:colCount>' + cols + '</gs:colCount>';
+        xml += '</entry>';
+
+        return gsheet.updateWorksheetMetadata(self.links.edit.href, xml).then(function() {
+            self.title = title;
+            self.rowCount = rows;
+            self.colCount = cols;
+            return self;
+        });
+    };
 
     /**
      * @param opts - Supported options are:
