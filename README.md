@@ -22,7 +22,7 @@ var GoogleSpreadsheet = require("google-sheets-node-api");
 
 var mySheet = new GoogleSpreadsheet('<spreadsheet ID>');
 
-mySheet.useServiceAccountAuth(creds).then(mySheet.getInfo.bind(mySheet)).then(function(sheet_info ) {
+mySheet.useServiceAccountAuth(creds).then(mySheet.getSpreadsheet.bind(mySheet)).then(function(sheet_info) {
     console.log( sheet_info.title + ' is loaded' );
 
     var sheet1 = sheet_info.worksheets[0];
